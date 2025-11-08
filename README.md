@@ -1,5 +1,5 @@
 Kratos — Firebase Chat App (Android / Kotlin)
-
+test
 A clean, MVVM-structured Android app that demonstrates Firebase Authentication, Cloud Firestore, and 1:1 chat using Kotlin coroutines, Flow, and modern Android architecture.
 
 Features
