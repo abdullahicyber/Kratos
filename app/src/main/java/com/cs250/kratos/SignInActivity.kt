@@ -149,12 +149,24 @@ class SignInActivity : AppCompatActivity() {
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Launch FirebaseUI sign-in flow when button clicked.
-        binding.accountSignIn.setOnClickListener {
+        supportActionBar?.hide()
+
+        // Sign In
+        binding.signInButton.setOnClickListener {
             val intent = AuthUI.getInstance().createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setLogo(R.drawable.ic_fire_emoji) // optional app logo
-                .setIsSmartLockEnabled(false)      // disable SmartLock for manual testing
+                .setLogo(R.drawable.ic_fire_emoji)
+                .setIsSmartLockEnabled(false)
+                .build()
+            launcher.launch(intent)
+        }
+
+        // Create Account
+        binding.createAccountButton.setOnClickListener {
+            val intent = AuthUI.getInstance().createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .setLogo(R.drawable.ic_fire_emoji)
+                .setIsSmartLockEnabled(false)
                 .build()
             launcher.launch(intent)
         }
