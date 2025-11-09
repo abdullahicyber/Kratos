@@ -1,5 +1,5 @@
 *.iml
-.gradle
+.gradle/
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -10,7 +10,20 @@
 .DS_Store
 /build
 /captures
-.externalNativeBuild
-.cxx
+.externalNativeBuild/
+.cxx/
 local.properties
 /app/google-services.json
+# IDE
+.idea/
+*.iml
+.kotlinc/
+.kotlin/
+.vscode/
+# Artifacts / logs
+*.log
+*.apk
+*.aab
+*.aar
+*.hprof
+Thumbs.db
