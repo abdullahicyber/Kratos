@@ -84,7 +84,8 @@ class PeopleFragment : Fragment() {
      * Performs authentication checks and loads the user list.
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Toast.makeText(requireContext(), "Select a person to start a chat", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Select a person to start a chat", Toast.LENGTH_SHORT)
+            .show()
 
         // 1️⃣ Guard: ensure the user is signed in
         if (FirebaseAuth.getInstance().currentUser == null) {
@@ -148,61 +149,64 @@ class PeopleFragment : Fragment() {
                     .putExtra(ChatActivity.EXTRA_OTHER_UID, user.uid)
             )
         }
-    }
 
-    /**
-     * Clears the binding reference when the view is destroyed.
-     */
+    }
+        /**
+         * Clears the binding reference when the view is destroyed.
+         */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-}
-
-/**
- * # UsersAdapter
- *
- * Simple RecyclerView adapter to display a list of [UserProfile]s.
- *
- * Each row shows a user's display name and provides a “Chat” button.
- * Clicking the button or the entire row triggers the provided [onClick] lambda.
- */
-private class UsersAdapter(
-    private val items: List<UserProfile>,
-    private val onClick: (UserProfile) -> Unit
-) : androidx.recyclerview.widget.RecyclerView.Adapter<UserVH>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserVH {
-        val binding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return UserVH(binding, onClick)
-    }
-
-    override fun onBindViewHolder(holder: UserVH, position: Int) = holder.bind(items[position])
-
-    override fun getItemCount() = items.size
-}
-
-/**
- * # UserVH (ViewHolder)
- *
- * A lightweight holder for a single user row.
- * Handles name display and click listeners for chat actions.
- */
-private class UserVH(
-    private val binding: ItemUserBinding,
-    private val onClick: (UserProfile) -> Unit
-) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
 
     /**
-     * Binds the given [UserProfile] to the row’s UI.
-     * Displays either the display name or email if no name is set.
+     * # UsersAdapter
      *
-     * @param user The user to display.
+     * Simple RecyclerView adapter to display a list of [UserProfile]s.
+     *
+     * Each row shows a user's display name and provides a “Chat” button.
+     * Clicking the button or the entire row triggers the provided [onClick] lambda.
      */
-    fun bind(user: UserProfile) {
-        binding.name.text = user.displayName.ifBlank { user.email }
-        // Respond to both row click and chat button click
-        binding.chatButton.setOnClickListener { onClick(user) }
-        binding.root.setOnClickListener { onClick(user) }
+    private class UsersAdapter(
+        private val items: List<UserProfile>,
+        private val onClick: (UserProfile) -> Unit
+    ) : androidx.recyclerview.widget.RecyclerView.Adapter<UserVH>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserVH {
+            val binding =
+                ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return UserVH(binding, onClick)
+        }
+
+        override fun onBindViewHolder(holder: UserVH, position: Int) = holder.bind(items[position])
+
+        override fun getItemCount() = items.size
+    }
+
+    /**
+     * # UserVH (ViewHolder)
+     *
+     * A lightweight holder for a single user row.
+     * Handles name display and click listeners for chat actions.
+     */
+    private class UserVH(
+        private val binding: ItemUserBinding,
+        private val onClick: (UserProfile) -> Unit
+    ) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
+
+        /**
+         * Binds the given [UserProfile] to the row’s UI.
+         * Displays either the display name or email if no name is set.
+         *
+         * @param user The user to display.
+         */
+        fun bind(user: UserProfile) {
+            binding.name.text = user.displayName.ifBlank { user.email }
+            // Respond to both row click and chat button click
+            binding.chatButton.setOnClickListener { onClick(user) }
+            binding.root.setOnClickListener { onClick(user) }
+        }
     }
 }
+
+

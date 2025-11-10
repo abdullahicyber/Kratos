@@ -109,14 +109,17 @@ class SignInActivity : AppCompatActivity() {
 
             // Ensure Firestore profile exists, then navigate to main screen.
             CoroutineScope(Dispatchers.Main).launch {
-                runCatching { authRepo.ensureProfile() }
+                runCatching { authRepo.ensureProfile() } // This function should exist in AuthRepository
                     .onSuccess {
                         dialog.dismiss()
+
+                        // --- THIS IS THE FIX ---
+                        // Change the destination from CreateProfileActivity back to MainActivity.
                         startActivity(
                             Intent(this@SignInActivity, MainActivity::class.java)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         )
-                        finish()
+                        finish() // Close the sign-in screen
                     }
                     .onFailure {
                         dialog.dismiss()
@@ -152,11 +155,11 @@ class SignInActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         // Sign In
-        binding.signInButton.setOnClickListener {
+        binding.accountSignIn.setOnClickListener {
             val intent = AuthUI.getInstance().createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setLogo(R.drawable.ic_fire_emoji)
-                .setIsSmartLockEnabled(false)
+                .setLogo(R.drawable.ic_fire_emoji) // Make sure this drawable exists
+                .setIsSmartLockEnabled(false) // Good for development
                 .build()
             launcher.launch(intent)
         }

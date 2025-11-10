@@ -85,11 +85,13 @@ class CreateProfileActivity : AppCompatActivity() {
             if (name.isEmpty()) {
                 Snackbar.make(binding.root, "Please enter a display name", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
+            } else {
+                println("Name: $name")
             }
 
             // Disable button to prevent multiple clicks.
             binding.save.isEnabled = false
-
+            println("Name: $name")
             // Launch coroutine to create/update Firestore profile.
             lifecycleScope.launch {
                 runCatching {

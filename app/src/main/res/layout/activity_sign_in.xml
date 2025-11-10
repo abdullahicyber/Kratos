@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFEF4"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:background="#FFFEF4">
+    android:padding="24dp">
 
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -28,18 +27,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:hint="Email"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Kratos.Rounded26"
         app:boxStrokeColor="#FF4D00"
         app:boxStrokeWidth="0dp"
-        app:boxStrokeWidthFocused="0dp">
+        app:boxStrokeWidthFocused="0dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Kratos.Rounded26">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
             android:background="@null"
-            android:backgroundTint="@null" />
+            android:backgroundTint="@null"
+            android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Password -->
@@ -49,41 +48,41 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:hint="Password"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Kratos.Rounded26"
         app:boxStrokeColor="#FF4D00"
         app:boxStrokeWidth="0dp"
-        app:boxStrokeWidthFocused="0dp">
+        app:boxStrokeWidthFocused="0dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Kratos.Rounded26">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
             android:background="@null"
-            android:backgroundTint="@null"/>
+            android:backgroundTint="@null"
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Sign In -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/sign_in_button"
+        android:id="@+id/accountSignIn"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:backgroundTint="#FF4D00"
         android:text="Sign In"
         android:textAllCaps="false"
-        android:backgroundTint="#FF4D00"
         app:cornerRadius="20dp" />
 
     <!-- Create Account -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_account_button"
+        android:id="@+id/createAccountButton"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="#FF4D00"
         android:text="Create Account"
         android:textAllCaps="false"
-        android:backgroundTint="#FF4D00"
         app:cornerRadius="20dp" />
 
 </LinearLayout>

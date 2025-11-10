@@ -63,6 +63,7 @@ class SplashActivity : AppCompatActivity() {
         val next = if (FirebaseAuth.getInstance().currentUser == null) {
             Intent(this, SignInActivity::class.java)
         } else {
+//            Intent(this, MainActivity::class.java)
             Intent(this, MainActivity::class.java)
         }
 

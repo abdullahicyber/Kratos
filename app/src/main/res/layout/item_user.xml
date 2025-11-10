@@ -17,5 +17,6 @@
         android:id="@+id/chat_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chat" />
+        android:text="Chat"
+        android:focusable="false"/>
 </LinearLayout>
