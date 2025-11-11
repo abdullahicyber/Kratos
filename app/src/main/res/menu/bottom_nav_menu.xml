@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- ids MUST be navigation_people and navigation_my_account -->
+
     <item
         android:id="@+id/navigation_people"
-        android:title="People"/>
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="People" />
+
     <item
         android:id="@+id/navigation_my_account"
-        android:title="My Account"/>
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="My Account" />
+
 </menu>
