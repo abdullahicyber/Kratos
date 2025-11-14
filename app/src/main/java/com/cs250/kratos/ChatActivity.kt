@@ -62,7 +62,6 @@ class ChatActivity : AppCompatActivity() {
 
     /** RecyclerView adapter for rendering messages. */
     private lateinit var adapter: MessagesAdapter
-
     /**
      * Standard Activity creation: guard auth, init views, wire streams and send actions.
      */
