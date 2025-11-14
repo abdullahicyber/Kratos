@@ -33,7 +33,7 @@ import kotlinx.coroutines.tasks.await
  * @property auth FirebaseAuth instance (defaults to [FirebaseAuth.getInstance()])
  * @property db Firestore instance (defaults to [FirebaseFirestore.getInstance()])
  */
-class AuthRepository(
+open class AuthRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) {

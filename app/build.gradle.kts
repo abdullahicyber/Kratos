@@ -6,14 +6,25 @@ plugins {
     //id("com.google.gms.google-services")
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("androidx.test:runner:1.5.2")
+        force("androidx.test:rules:1.5.0")
+        force("androidx.test.ext:junit:1.1.5")
+        force("androidx.test.espresso:espresso-core:3.5.1")
+        force("androidx.test.espresso:espresso-contrib:3.5.1")
+        force("androidx.test.espresso:espresso-intents:3.5.1")
+    }
+}
+
 android {
     namespace = "com.cs250.kratos"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.cs250.kratos"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -65,8 +76,18 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation("androidx.arch.core:core-testing:2.2.0") // For InstantTaskExecutorRule
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1") // For mocking
+
+    androidTestImplementation("org.mockito:mockito-android:5.11.0")
+    androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0") // For UI Automator
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
