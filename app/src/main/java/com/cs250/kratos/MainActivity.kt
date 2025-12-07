@@ -67,7 +67,7 @@ import com.cs250.kratos.ui.PeopleFragment
  *   for readability.
  * - Rely on ViewBinding to avoid `findViewById` and improve safety.
  */
-class MainActivity : AppCompatActivity() {
+class   MainActivity : AppCompatActivity() {
 
     /** ViewBinding instance for accessing layout elements safely. */
     private lateinit var binding: ActivityMainBinding
