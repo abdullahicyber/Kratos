@@ -34,6 +34,8 @@
 
         <!-- Other activities in the same <application> block -->
         <activity android:name=".SignInActivity" />
+        <activity android:name=".RegisterActivity"
+            android:label="Create Account" />
         <activity android:name=".ChatActivity" />
 
     </application>

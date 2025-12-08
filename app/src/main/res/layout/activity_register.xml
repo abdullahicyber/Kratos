@@ -8,26 +8,34 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Headline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Create Your Account" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/logo_image_view"
-        android:layout_width="260dp"
-        android:layout_height="164dp"
-        android:layout_marginBottom="5dp"
-        android:contentDescription="Kratos App Logo"
-        android:scaleType="centerCrop"
-        android:src="@drawable/kratoslogo"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Kratos.Rounded26"
-        app:strokeColor="#FF4D00"
-        app:strokeWidth="0.6dp" />
-
-    <!-- Email -->
+    <!-- Display Name -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email_input_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:hint="Display Name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/displayName_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Email -->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:hint="Email">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -40,7 +48,6 @@
 
     <!-- Password -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password_input_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,26 +63,15 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Sign In -->
+    <!-- Register Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/accountSignIn"
+        android:id="@+id/register_button"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:backgroundTint="#FF4D00"
-        android:text="Sign In"
+        android:text="Register"
         android:textAllCaps="false"
         app:cornerRadius="20dp" />
 
-    <!-- Create Account -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/createAccountButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Register Now"
-        android:textAllCaps="false"
-        android:textStyle="bold"
-        android:textColor="#FF4D00"/>
 </LinearLayout>
