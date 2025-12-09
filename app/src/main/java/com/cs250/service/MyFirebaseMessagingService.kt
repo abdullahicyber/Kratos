@@ -9,10 +9,16 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.cs250.kratos.MainActivity
 import com.cs250.kratos.R
+import com.cs250.kratos.data.AuthRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+
+    private val authRepo = AuthRepository()
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         // Check if message contains a notification payload.
@@ -55,8 +61,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        // Here you would normally send the token to your server or Firestore
-        // so you know which phone belongs to which user.
-        // We will implement saving this in the next step.
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            GlobalScope.launch {
+                try {
+                    authRepo.updateFcmToken(currentUser.uid, token)
+                } catch (e: Exception) {
+                    // Handle exception
+                }
+            }
+        }
     }
 }
