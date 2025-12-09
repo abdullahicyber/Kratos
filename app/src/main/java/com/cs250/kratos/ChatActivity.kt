@@ -129,7 +129,18 @@ class ChatActivity : AppCompatActivity() {
                         binding.input.setText("")
                         binding.send.isEnabled = false
                         binding.messages.scrollToPosition(adapter.itemCount - 1)
+                        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                        db.collection("users").document(otherUid).get()
+                            .addOnSuccessListener { document ->
+                                val token = document.getString("fcmToken")
+                                if (token != null) {
+                                    com.cs250.kratos.utils.FcmApiHelper.sendNotification(token, "New Message", text)
+                                }
+                            }
+
                     }
+
+
                     .onFailure { e ->
                         android.widget.Toast.makeText(
                             this@ChatActivity,
