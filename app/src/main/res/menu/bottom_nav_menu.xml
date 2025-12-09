@@ -3,8 +3,14 @@
     <!-- ids MUST be navigation_people and navigation_my_account -->
     <item
         android:id="@+id/navigation_people"
+        android:icon="@drawable/ic_home_black_24dp"
         android:title="People"/>
     <item
+        android:id="@+id/navigation_my_workouts"
+        android:icon="@drawable/ic_fire_emoji"
+        android:title="My Workouts"/>
+    <item
         android:id="@+id/navigation_my_account"
+        android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="My Account"/>
 </menu>
