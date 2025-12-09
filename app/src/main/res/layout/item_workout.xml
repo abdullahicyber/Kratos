@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardElevation="2dp"
-    app:cardCornerRadius="8dp"
-    android:layout_marginVertical="4dp">
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical">
 
+    <!-- This part displays the workout name and stats -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/text_view_workout_name"
+            android:id="@+id/textViewWorkoutName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Morning Run"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+            android:text="Workout Name"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/text_view_workout_date"
+            android:id="@+id/textViewWorkoutStats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="May 24, 2024"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
-
-        <TextView
-            android:id="@+id/text_view_workout_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="5.2 km - 30:15 min"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            android:text="30 minutes" />
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <!-- 3. ADD THIS DELETE BUTTON -->
+    <Button
+        android:id="@+id/button_delete"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete" />
+
+</LinearLayout>
