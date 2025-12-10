@@ -21,11 +21,26 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val authRepo = AuthRepository()
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // Check if message contains a notification payload.
+        super.onMessageReceived(remoteMessage)
+
+        // 1. Check for Notification Payload (What you currently have)
         remoteMessage.notification?.let {
             sendNotification(it.title ?: "New Message", it.body ?: "")
         }
+
+        // 2. CRITICAL ADDITION: Check for Data Payload
+        // Cloud Functions often send data here to bypass background restrictions
+        if (remoteMessage.data.isNotEmpty()) {
+            val title = remoteMessage.data["title"] ?: "New Message"
+            val body = remoteMessage.data["body"] ?: remoteMessage.data["message"] ?: "You have a new message"
+
+            // Only send notification if we haven't already sent one from the block above
+            if (remoteMessage.notification == null) {
+                sendNotification(title, body)
+            }
+        }
     }
+
 
     private fun sendNotification(title: String, messageBody: String) {
         val intent = Intent(this, MainActivity::class.java)
@@ -37,9 +52,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val channelId = "kratos_chat_channel"
+        val channelId = "kratos_chat_channel_v2"
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher) // Make sure you have an icon
+            .setSmallIcon(android.R.drawable.ic_dialog_info) // Use a built-in system icon for testing
+            // Make sure you have an icon
             .setContentTitle(title)
             .setContentText(messageBody)
             .setAutoCancel(true)

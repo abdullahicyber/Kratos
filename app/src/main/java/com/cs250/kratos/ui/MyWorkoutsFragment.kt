@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast // <-- IMPORT TOAST
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -64,12 +65,52 @@ class MyWorkoutsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        workoutAdapter = WorkoutAdapter(workoutList)
+        workoutAdapter = WorkoutAdapter(workoutList) { workout ->
+            deleteWorkout(workout)
+        }
         binding.recyclerViewWorkouts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = workoutAdapter
         }
     }
+
+    private fun deleteWorkout(workout: Workout) {
+        if (workout.id.isEmpty()) {
+            Toast.makeText(context, "Cannot delete, workout ID is missing.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // --- OPTIMISTIC UI: UPDATE THE SCREEN INSTANTLY ---
+
+        // 1. Find the position of the item in the local list.
+        val position = workoutList.indexOfFirst { it.id == workout.id }
+
+        // 2. Remove it from the local list and notify the adapter of the exact removal.
+        //    This triggers the nice "item removed" animation.
+        if (position != -1) {
+            workoutList.removeAt(position)
+            workoutAdapter.notifyItemRemoved(position)
+            Toast.makeText(context, "Workout deleted.", Toast.LENGTH_SHORT).show()
+        }
+
+        // --- Now, delete from Firestore in the background ---
+        db.collection("workouts").document(workout.id)
+            .delete()
+            .addOnSuccessListener {
+                // Success! The UI is already correct. Nothing more to do.
+            }
+            .addOnFailureListener { e ->
+                // Uh oh, the delete failed. We need to add the item back to the UI.
+                Toast.makeText(context, "Delete failed on server. Restoring item.", Toast.LENGTH_SHORT).show()
+                if (position != -1) {
+                    // Add the item back to where it was and notify the adapter.
+                    workoutList.add(position, workout)
+                    workoutAdapter.notifyItemInserted(position)
+                }
+            }
+    }
+
+
 
     private fun fetchWorkouts() {
         val currentUser = auth.currentUser
@@ -88,15 +129,14 @@ class MyWorkoutsFragment : Fragment() {
                 }
 
                 if (snapshots != null) {
-                    workoutList.clear()
                     val workouts = snapshots.toObjects(Workout::class.java)
-                    workoutList.addAll(workouts)
-                    workoutAdapter.notifyDataSetChanged()
+                    // This is a more reliable way to update the adapter's data
+                    workoutAdapter.updateWorkouts(workouts)
 
                     updateSummaryCards(workouts)
 
-                    binding.textViewEmpty.isVisible = workoutList.isEmpty()
-                    binding.recyclerViewWorkouts.isVisible = workoutList.isNotEmpty()
+                    binding.textViewEmpty.isVisible = workouts.isEmpty()
+                    binding.recyclerViewWorkouts.isVisible = workouts.isNotEmpty()
                 }
             }
     }
@@ -143,7 +183,6 @@ class MyWorkoutsFragment : Fragment() {
             } else if (dayDifference > 1L) {
                 break // Gap in dates, streak is broken
             }
-            // If dayDifference is 0, it's a workout on the same day, so we just continue
         }
         return streak
     }
