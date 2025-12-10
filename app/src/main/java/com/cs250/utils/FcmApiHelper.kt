@@ -14,7 +14,7 @@ object FcmApiHelper {
     // Ideally, this should be done via Cloud Functions.
     // Go to Firebase Console -> Project Settings -> Cloud Messaging -> Enable Cloud Messaging API (Legacy)
     // Copy the "Server key"
-    private const val SERVER_KEY = "AIzaSyBlis8wr32GGBPkQW7CMVmz4fXk2XkSncY" // Ensure this is your correct legacy server key
+    private const val SERVER_KEY = "6268ffabf4dd85285e15deacfe037c8a26d4cd87" // Ensure this is your correct legacy server key
 
     fun sendNotification(recipientToken: String, title: String, message: String) {
         val json = JSONObject()
