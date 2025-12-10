@@ -9,5 +9,6 @@ data class Workout(
     val userId: String = "",
     val workoutName: String = "",
     val durationMinutes: Int = 0,
+    val caloriesBurned: Int = 0,
     @ServerTimestamp val timestamp: Date? = null
 )

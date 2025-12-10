@@ -67,12 +67,16 @@ class WorkoutAdapter(
 
     inner class WorkoutViewHolder(private val binding: ItemWorkoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(workout: Workout) {
+            // Set the workout name
             binding.textViewWorkoutName.text = workout.workoutName
-            val stats = "${workout.durationMinutes} minutes"
+
+            // 4. UPDATE THE STATS TEXT to include duration AND calories
+            val stats = "${workout.durationMinutes} min - ${workout.caloriesBurned} kcal"
             binding.textViewWorkoutStats.text = stats
 
-            // 5. Set the click listener on the delete button from your layout
+            // ... (keep your existing code for timestamp and delete button)
             binding.buttonDelete.setOnClickListener {
                 onDeleteClicked(workout)
             }

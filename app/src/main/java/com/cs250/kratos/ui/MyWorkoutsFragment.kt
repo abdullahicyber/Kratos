@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast // <-- IMPORT TOAST
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -76,36 +76,46 @@ class MyWorkoutsFragment : Fragment() {
 
     private fun deleteWorkout(workout: Workout) {
         if (workout.id.isEmpty()) {
-            Toast.makeText(context, "Cannot delete, workout ID is missing.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Cannot delete, workout ID is missing.", Toast.LENGTH_SHORT).show();
             return
         }
 
         // --- OPTIMISTIC UI: UPDATE THE SCREEN INSTANTLY ---
 
-        // 1. Find the position of the item in the local list.
         val position = workoutList.indexOfFirst { it.id == workout.id }
 
-        // 2. Remove it from the local list and notify the adapter of the exact removal.
-        //    This triggers the nice "item removed" animation.
         if (position != -1) {
+            // Remove the item from the local list
             workoutList.removeAt(position)
+            // Notify the adapter to animate the removal
             workoutAdapter.notifyItemRemoved(position)
+
+            // --- THE FIX IS HERE ---
+            // After removing the item from the local list,
+            // immediately re-calculate and update the summary cards.
+            updateSummaryCards(workoutList)
+
             Toast.makeText(context, "Workout deleted.", Toast.LENGTH_SHORT).show()
         }
 
-        // --- Now, delete from Firestore in the background ---
+        // --- Now, delete the item from Firestore in the background ---
         db.collection("workouts").document(workout.id)
             .delete()
             .addOnSuccessListener {
-                // Success! The UI is already correct. Nothing more to do.
+                // Success! UI is already correct.
             }
             .addOnFailureListener { e ->
-                // Uh oh, the delete failed. We need to add the item back to the UI.
+                // ERROR! The delete failed on the server. We must add the item back.
                 Toast.makeText(context, "Delete failed on server. Restoring item.", Toast.LENGTH_SHORT).show()
                 if (position != -1) {
-                    // Add the item back to where it was and notify the adapter.
+                    // Add the item back to the list
                     workoutList.add(position, workout)
+                    // Notify the adapter to animate the item coming back
                     workoutAdapter.notifyItemInserted(position)
+
+                    // --- AND FIX THE CARDS AGAIN ON FAILURE ---
+                    // Re-calculate the cards with the restored list.
+                    updateSummaryCards(workoutList)
                 }
             }
     }
@@ -125,13 +135,13 @@ class MyWorkoutsFragment : Fragment() {
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
+                    // Handle error
                     return@addSnapshotListener
                 }
 
                 if (snapshots != null) {
                     val workouts = snapshots.toObjects(Workout::class.java)
-                    // This is a more reliable way to update the adapter's data
-                    workoutAdapter.updateWorkouts(workouts)
+                    workoutAdapter.updateWorkouts(workouts) // Use the DiffUtil update method
 
                     updateSummaryCards(workouts)
 
@@ -142,18 +152,25 @@ class MyWorkoutsFragment : Fragment() {
     }
 
     private fun updateSummaryCards(workouts: List<Workout>) {
-        // Calculate workouts this week
+        // --- Get all workouts from the last 7 days ---
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_YEAR, -7)
         val oneWeekAgo = calendar.time
+        val weeklyWorkouts = workouts.filter { it.timestamp != null && it.timestamp.after(oneWeekAgo) }
 
-        val workoutsThisWeek = workouts.count { it.timestamp != null && it.timestamp.after(oneWeekAgo) }
-        binding.textViewWorkoutsWeek.text = workoutsThisWeek.toString()
+        // --- Update UI Cards ---
+        // Update workouts this week count
+        binding.textViewWorkoutsWeek.text = weeklyWorkouts.size.toString()
 
-        // Calculate active streak
+        // (NEW) Update calories this week count
+        val totalCaloriesThisWeek = weeklyWorkouts.sumOf { it.caloriesBurned }
+        binding.textViewCaloriesWeek.text = totalCaloriesThisWeek.toString()
+
+        // Update active streak
         val activeStreak = calculateActiveStreak(workouts)
         binding.textViewActiveStreak.text = "$activeStreak Days"
     }
+
 
     private fun calculateActiveStreak(workouts: List<Workout>): Int {
         if (workouts.isEmpty()) return 0
