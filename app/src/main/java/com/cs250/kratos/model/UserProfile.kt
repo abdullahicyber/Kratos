@@ -20,6 +20,7 @@ package com.cs250.kratos.model
  * displayName: "Alice Example",
  * email: "alice@example.com",
  * photoUrl: "https://example.com/alice.jpg",
+ * fcmToken: "c123...",
  * createdAt: 1717000000000
  * ```
  *
@@ -49,6 +50,7 @@ package com.cs250.kratos.model
  * @property displayName The user's display name shown throughout the app.
  * @property email The user’s email address. May be empty for anonymous users.
  * @property photoUrl Optional URL of the user’s avatar or profile picture.
+ * @property fcmToken The user's current Firebase Cloud Messaging token. Null if not available.
  * @property createdAt Epoch timestamp (milliseconds) when the profile was created locally.
  */
 data class UserProfile(
@@ -56,5 +58,6 @@ data class UserProfile(
         val displayName: String = "",
         val email: String = "",
         val photoUrl: String? = null,
+        val fcmToken: String? = null,
         val createdAt: Long = System.currentTimeMillis()
 )
