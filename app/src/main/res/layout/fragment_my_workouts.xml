@@ -8,21 +8,24 @@
     android:padding="16dp"
     tools:context=".ui.MyWorkoutsFragment">
 
+    <!-- This LinearLayout holds your top summary cards -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
+        <!-- WORKOUTS THIS WEEK CARD -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            app:cardElevation="4dp"
-            android:layout_marginEnd="8dp">
+            app:cardElevation="4dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="107dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
@@ -31,23 +34,52 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Workouts This Week"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"/>
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
                 <TextView
                     android:id="@+id/text_view_workouts_week"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- TOTAL CALORIES THIS WEEK CARD (NEW) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="107dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calories Burnt This Week"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+
+                <TextView
+                    android:id="@+id/text_view_calories_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ACTIVE STREAK CARD -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:cardElevation="4dp"
-            android:layout_marginStart="8dp">
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,14 +91,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Active Streak"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"/>
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
                 <TextView
                     android:id="@+id/text_view_active_streak"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 Days"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
@@ -75,16 +107,16 @@
         android:id="@+id/btn_start_workout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start a New Workout"
-        android.backgroundTint="@color/purple_500"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/purple_500"
+        android:text="Start a New Workout" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Recent Workouts"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        android:layout_marginBottom="8dp"/>
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_workouts"
@@ -97,8 +129,8 @@
         android:id="@+id/text_view_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No workouts logged yet."
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:text="No workouts logged yet."
+        android:visibility="gone" />
 
 </LinearLayout>
