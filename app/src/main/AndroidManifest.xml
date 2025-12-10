@@ -5,6 +5,9 @@
     <!-- 🔑 Add permissions OUTSIDE the <application> tag -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:allowBackup="true"
@@ -38,7 +41,13 @@
             android:label="Create Account" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".LogWorkoutActivity" />
-
+        <service
+            android:name=".service.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

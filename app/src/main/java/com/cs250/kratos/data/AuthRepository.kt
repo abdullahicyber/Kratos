@@ -161,6 +161,17 @@ open class AuthRepository(
     }
 
     /**
+     * Updates the FCM token for a given user.
+     *
+     * @param uid The user's ID.
+     * @param token The new FCM token.
+     */
+    suspend fun updateFcmToken(uid: String, token: String) {
+        db.collection("users").document(uid).update("fcmToken", token).await()
+    }
+
+
+    /**
      * Signs out the current Firebase user.
      *
      * Note: This is synchronous and does not hit the network. After this call,
