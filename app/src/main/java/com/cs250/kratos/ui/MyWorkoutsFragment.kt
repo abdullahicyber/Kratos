@@ -19,16 +19,26 @@ import com.google.firebase.firestore.Query
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
-
+/**
+ * Displays the user's workout history and summary statistics.
+ *
+ * Key Features:
+ * 1. Real-time list of workouts (fetches from Firestore).
+ * 2. Dashboard cards showing weekly stats (Total Workouts, Calories, Streak).
+ * 3. Optimistic UI updates when deleting items (removes them instantly from the screen).
+ */
 class MyWorkoutsFragment : Fragment() {
 
     private var _binding: FragmentMyWorkoutsBinding? = null
+    // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
     private lateinit var workoutAdapter: WorkoutAdapter
+    // Local list copy to support Optimistic UI updates
     private val workoutList = mutableListOf<Workout>()
+    // Reference to the Firestore listener so we can detach it when the user leaves the screen
     private var listenerRegistration: ListenerRegistration? = null
 
     override fun onCreateView(
@@ -47,24 +57,25 @@ class MyWorkoutsFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         setupRecyclerView()
-
+// Navigate to the "Add Workout" screen
         binding.btnStartWorkout.setOnClickListener {
             val intent = Intent(requireContext(), LogWorkoutActivity::class.java)
             startActivity(intent)
         }
     }
-
+    // Start listening for data changes only when the screen is visible to save data/battery
     override fun onStart() {
         super.onStart()
         fetchWorkouts()
     }
-
+    // Stop listening when the screen is hidden (e.g., user goes to Home screen)
     override fun onStop() {
         super.onStop()
         listenerRegistration?.remove()
     }
 
     private fun setupRecyclerView() {
+        // Initialize adapter with the delete callback
         workoutAdapter = WorkoutAdapter(workoutList) { workout ->
             deleteWorkout(workout)
         }
@@ -73,7 +84,14 @@ class MyWorkoutsFragment : Fragment() {
             adapter = workoutAdapter
         }
     }
-
+    /**
+     * Deletes a workout using the "Optimistic UI" pattern.
+     * * Strategy:
+     * 1. Remove the item from the screen IMMEDIATELY (user feels zero lag).
+     * 2. Recalculate stats (calories/streak) immediately based on the new list.
+     * 3. Send the delete request to the server in the background.
+     * 4. If the server fails, "Rollback" by adding the item back to the screen.
+     */
     private fun deleteWorkout(workout: Workout) {
         if (workout.id.isEmpty()) {
             Toast.makeText(context, "Cannot delete, workout ID is missing.", Toast.LENGTH_SHORT).show();
@@ -129,10 +147,10 @@ class MyWorkoutsFragment : Fragment() {
             binding.recyclerViewWorkouts.isVisible = false
             return
         }
-
+// Listen for real-time updates (adds, edits, deletes)
         listenerRegistration = db.collection("workouts")
             .whereEqualTo("userId", currentUser.uid)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)// Newest first
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     // Handle error
@@ -142,15 +160,17 @@ class MyWorkoutsFragment : Fragment() {
                 if (snapshots != null) {
                     val workouts = snapshots.toObjects(Workout::class.java)
                     workoutAdapter.updateWorkouts(workouts) // Use the DiffUtil update method
-
+// Recalculate the top dashboard stats whenever data changes
                     updateSummaryCards(workouts)
-
+// Toggle empty state view
                     binding.textViewEmpty.isVisible = workouts.isEmpty()
                     binding.recyclerViewWorkouts.isVisible = workouts.isNotEmpty()
                 }
             }
     }
-
+    /**
+     * Calculates and updates the dashboard statistics based on the provided list.
+     */
     private fun updateSummaryCards(workouts: List<Workout>) {
         // --- Get all workouts from the last 7 days ---
         val calendar = Calendar.getInstance()
@@ -203,7 +223,10 @@ class MyWorkoutsFragment : Fragment() {
         }
         return streak
     }
-
+    /**
+     * Helper to strip time information (hours, mins, secs) from a Date object.
+     * Useful for comparing "Day 1" vs "Day 2" regardless of what time the workout happened.
+     */
     private fun getStartOfDay(date: Date): Date {
         val calendar = Calendar.getInstance()
         calendar.time = date
