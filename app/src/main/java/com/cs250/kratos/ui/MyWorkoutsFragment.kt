@@ -19,6 +19,13 @@ import com.google.firebase.firestore.Query
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import android.app.AlertDialog
+import android.text.InputType
+import android.widget.EditText
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.SetOptions
+import java.text.SimpleDateFormat
+import java.util.Locale
 /**
  * Displays the user's workout history and summary statistics.
  *
@@ -36,6 +43,9 @@ class MyWorkoutsFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
     private lateinit var workoutAdapter: WorkoutAdapter
+
+    private var dailyCaloriesToday: Int = 0
+
     // Local list copy to support Optimistic UI updates
     private val workoutList = mutableListOf<Workout>()
     // Reference to the Firestore listener so we can detach it when the user leaves the screen
@@ -50,6 +60,114 @@ class MyWorkoutsFragment : Fragment() {
         return binding.root
     }
 
+    private fun getTodayKey(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Date())
+    }
+
+    private fun loadDailyCaloriesForToday() {
+        val currentUser = auth.currentUser ?: return
+
+        val dateKey = getTodayKey()
+        val docId = "${currentUser.uid}_$dateKey"
+
+        db.collection("dailyCalories")
+            .document(docId)
+            .get()
+            .addOnSuccessListener { doc ->
+                dailyCaloriesToday = (doc.getLong("totalCalories") ?: 0L).toInt()
+                binding.textViewDailyCalories.text = dailyCaloriesToday.toString()
+            }
+            .addOnFailureListener {
+                binding.textViewDailyCalories.text = "0"
+                dailyCaloriesToday = 0
+            }
+    }
+
+    private fun showAddDailyCaloriesDialog() {
+        val context = requireContext()
+
+        val input = EditText(context).apply {
+            hint = "Calories to add (e.g. 500)"
+            inputType = InputType.TYPE_CLASS_NUMBER
+        }
+
+        AlertDialog.Builder(context)
+            .setTitle("Add To Daily Calories")
+            .setView(input)
+            .setPositiveButton("Add") { _, _ ->
+                val text = input.text.toString().trim()
+                val amount = text.toIntOrNull()
+
+                if (amount == null || amount <= 0) {
+                    Toast.makeText(context, "Enter a positive number", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                addCaloriesToToday(amount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    private fun addCaloriesToToday(amount: Int) {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(context, "You must be logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dateKey = getTodayKey()
+        val docId = "${currentUser.uid}_$dateKey"
+
+        val updates = hashMapOf(
+            "userId" to currentUser.uid,
+            "date" to dateKey,
+            "totalCalories" to FieldValue.increment(amount.toLong())
+        )
+
+        db.collection("dailyCalories")
+            .document(docId)
+            .set(updates, SetOptions.merge())
+            .addOnSuccessListener {
+                dailyCaloriesToday += amount
+                binding.textViewDailyCalories.text = dailyCaloriesToday.toString()
+                Toast.makeText(context, "Added $amount calories", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to add calories: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun resetDailyCaloriesToday() {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(context, "You must be logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dateKey = getTodayKey()
+        val docId = "${currentUser.uid}_$dateKey"
+
+        val updates = hashMapOf(
+            "userId" to currentUser.uid,
+            "date" to dateKey,
+            "totalCalories" to 0
+        )
+
+        db.collection("dailyCalories")
+            .document(docId)
+            .set(updates, SetOptions.merge())
+            .addOnSuccessListener {
+                dailyCaloriesToday = 0
+                binding.textViewDailyCalories.text = "0"
+                Toast.makeText(context, "Daily calories reset.", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to reset calories: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -57,6 +175,19 @@ class MyWorkoutsFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         setupRecyclerView()
+
+        // Load today's daily calories
+        loadDailyCaloriesForToday()
+
+// Handle "Add To Daily Calories" button
+        binding.btnAddDailyCalories.setOnClickListener {
+            showAddDailyCaloriesDialog()
+        }
+
+// Handle "Reset" daily calories button
+        binding.btnResetDailyCalories.setOnClickListener {
+            resetDailyCaloriesToday()
+        }
 // Navigate to the "Add Workout" screen
         binding.btnStartWorkout.setOnClickListener {
             val intent = Intent(requireContext(), LogWorkoutActivity::class.java)
